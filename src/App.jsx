@@ -12,7 +12,7 @@ function App() {
 
   return (
     <div className="main-container">
-      <Navbar />
+      {/* <Navbar /> */}
       <div>
         {generation.map((e, id) => {
           return <Swiper key={id} name={e} />;
