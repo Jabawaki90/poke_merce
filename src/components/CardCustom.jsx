@@ -8,7 +8,7 @@ const CardCustom = ({ name }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("name", name);
+    // console.log("name", name);
     singlePokemon(name).then((e) => {
       setPoke(e.data);
       setLoading(false);
@@ -24,6 +24,7 @@ const CardCustom = ({ name }) => {
         }}
         cover={
           <img
+            className="card-image"
             src={poke?.sprites?.other["official-artwork"].front_default}
             alt=""
           />

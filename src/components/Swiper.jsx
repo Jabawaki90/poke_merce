@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./Swiper.scss";
 import {
   getGen1,
   getGen2,
@@ -11,8 +12,7 @@ import {
   getGen9,
 } from "../utils/get";
 import Carousel from "react-multi-carousel";
-import { Card } from "antd";
-import axios from "axios";
+import { Form, Input } from "antd";
 import CardCustom from "./CardCustom";
 
 let responsive = {
@@ -41,6 +41,10 @@ let responsive = {
 
 const Swiper = ({ name }) => {
   const [pokemonList, setPokemonList] = useState([]);
+  const [filterList, setFilterList] = useState([]);
+  const [searchName, setSearchName] = useState("");
+  const [doFilter, setDoFilter] = useState(false);
+
   useEffect(() => {
     if (name == 1) {
       getGen1().then((e) => setPokemonList(e.data.pokemon_species));
@@ -61,19 +65,75 @@ const Swiper = ({ name }) => {
     } else if (name == 9) {
       getGen9().then((e) => setPokemonList(e.data.pokemon_species));
     }
+    console.log("pokemon", pokemonList);
   }, [name]);
 
+  useEffect(() => {
+    setDoFilter(true);
+    console.log("searchName", searchName);
+
+    let john = pokemonList.filter((e) => e.name.indexOf(searchName) != -1);
+    setFilterList(john);
+
+    console.log("filter", john);
+    if (searchName == "") {
+      setDoFilter(false);
+    }
+  }, [searchName]);
+
+  const onChange = (e) => {
+    setSearchName(e.target.value);
+  };
+
   return (
-    <div style={{ margin: "20px 20px" }}>
-      {/* <h1>{`Generation ${name}`}</h1> */}
+    <div className="swiper-container">
+      <p className="swiper-title">{`Generation ${name}`}</p>
+      <div className="filter-container">
+        <Form
+          name="basic"
+          wrapperCol={{
+            span: 16,
+          }}
+          style={{
+            maxWidth: 600,
+            margin: 0,
+          }}
+          initialValues={{
+            remember: true,
+          }}
+          onChange={onChange}
+          // onFinish={onFinish}
+          // onFinishFailed={onFinishFailed}
+          autoComplete="off"
+        >
+          <Form.Item
+            // label="Username"
+            name="username"
+            style={{
+              fontSize: 30,
+              // margin: 0,
+              marginLeft: 5,
+              padding: 0,
+            }}
+            rules={[
+              {
+                // required: true,
+                // message: "Please input your username!",
+              },
+            ]}
+          >
+            <Input placeholder="Search your pokemon here" />
+          </Form.Item>
+        </Form>
+      </div>
       <Carousel containerClass="carousel-container" responsive={responsive}>
-        {pokemonList?.map((e, index) => {
-          return (
-            <CardCustom key={index} name={e.name}>
-              <CardCustom />
-            </CardCustom>
-          );
-        })}
+        {doFilter
+          ? filterList?.map((e, index) => {
+              return <CardCustom key={index} name={e.name} />;
+            })
+          : pokemonList?.map((e, index) => {
+              return <CardCustom key={index} name={e.name} />;
+            })}
       </Carousel>
     </div>
   );
